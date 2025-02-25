@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   db:
     image: postgres:15
@@ -25,12 +23,24 @@ services:
     depends_on:
       - redis
 
-  celery_scheduler:
-    build: .
-    command: celery -A tasks beat --loglevel=info
-    depends_on:
-      - redis
-      - celery_worker
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:ollama
+    container_name: open-webui
+    restart: always
+    ports:
+      - "3000:8080"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    volumes:
+      - ollama:/root/.ollama
+      - open-webui:/app/backend/data
+
+
 
 volumes:
+  open-webui:
+  ollama:
   postgres_data:
