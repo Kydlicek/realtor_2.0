@@ -1,0 +1,7 @@
+SQLAlchemy
+psycopg2-binary
+redis
+requests
+beautifulsoup4
+celery
+
