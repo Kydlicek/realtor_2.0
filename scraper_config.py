@@ -32,6 +32,4 @@ SCRAPER_SOURCES = {
         "buy_flat": "/prodej/byty/",
         "buy_house": "/prodej/domy/",
     },
-    
-
 }
