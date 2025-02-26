@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import requests
 from bs4 import BeautifulSoup
-from db.database import check_link_exists, save_new_listing,save_new_property
+from utils.database import check_link_exists, save_new_listing,save_new_property
 
 
 
