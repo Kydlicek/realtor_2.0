@@ -15,8 +15,7 @@ class SrealityScraper(BaseScraper):
         a_els = ul_element.find_all("a")
         hrefs = [a["href"] for a in a_els if a.has_attr("href")]
 
-        base_url = "https://www.sreality.cz"
-        real_urls = [base_url + href for href in hrefs]
+        real_urls = [self.base_url + href for href in hrefs]
 
         return real_urls
 

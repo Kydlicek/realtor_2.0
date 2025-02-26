@@ -1,11 +1,7 @@
 from abc import ABC, abstractmethod
 import requests
 from bs4 import BeautifulSoup
-from database_service.database import (
-    db_check_link_exists,
-    db_save_new_listing,
-    db_save_new_property,
-)
+from utils.database import check_link_exists, save_property, save_listing
 import asyncio
 
 
@@ -56,17 +52,17 @@ class BaseScraper(ABC):
     async def process_listings(self, listings_urls):
         """Processes extracted listings."""
         for url in listings_urls:
-            if not db_check_link_exists(url):
+            if not check_link_exists(url):
                 await asyncio.to_thread(self.process_detailed_listing, url)
 
     def process_detailed_listing(self, url):
         prop = self.get_property(url)
         if not self.check_property_exists(prop):
-            db_save_new_property(prop)
+            save_property(prop)
 
         listing = self.get_listing(url)
         if not self.check_listings_exists(listing):
-            db_save_new_listing(self.get_listing(url))
+            save_listing(self.get_listing(url))
 
         return True
 

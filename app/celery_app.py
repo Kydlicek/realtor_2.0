@@ -2,12 +2,8 @@
 from celery import Celery
 from celery.schedules import crontab
 
-# Initialize Celery
-app = Celery(
-    "tasks",
-    broker="redis://redis:6379/0",
-    backend="redis://redis:6379/0"
-)
+# Initialize Celery app
+app = Celery("tasks", broker="redis://redis:6379/0", backend="redis://redis:6379/0")
 
 # Update Celery configuration
 app.conf.update(
@@ -19,6 +15,9 @@ app.conf.update(
     enable_utc=True,
 )
 
+# Change this line - don't use "app" as a prefix
+app.autodiscover_tasks(["tasks"])
+
 # Celery Beat schedule
 app.conf.beat_schedule = {
     # Run scrapers every 15 minutes
@@ -26,10 +25,4 @@ app.conf.beat_schedule = {
         "task": "tasks.start_all_scrapers",
         "schedule": crontab(minute="*/15"),  # Every 15 minutes
     },
-
-    # # Calculate financials every hour
-    # "calculate-financials-every-hour": {
-    #     "task": "tasks.calculate_financials_for_all_listings",
-    #     "schedule": crontab(minute=0, hour="*/1"),  # Every hour at minute 0
-    # },
 }

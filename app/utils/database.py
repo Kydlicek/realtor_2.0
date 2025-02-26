@@ -3,12 +3,10 @@ from sqlalchemy.orm import sessionmaker
 from elasticsearch import Elasticsearch
 from datetime import datetime
 import os
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
 # Database connection
 DATABASE_URI = os.getenv("DATABASE_URI")
+# DATABASE_URI = 'postgresql://admin:Admin1234@postgres:5432/real_estate'
 engine = create_engine(DATABASE_URI)
 metadata = MetaData()
 Session = sessionmaker(bind=engine)
@@ -21,8 +19,9 @@ es = Elasticsearch("http://elasticsearch:9200")
 properties = Table("properties", metadata, autoload_with=engine)
 listings = Table("listings", metadata, autoload_with=engine)
 
+
 # Function to check if a listing URL already exists
-def check_link(url):
+def check_link_exists(url):
     """
     Check if a listing URL already exists in the database.
     Returns:
@@ -33,10 +32,13 @@ def check_link(url):
         existing_listing = session.execute(
             listings.select().where(listings.c.url == url)
         ).fetchone()
-        return existing_listing is not None  # Returns True if URL exists, False otherwise
+        return (
+            existing_listing is not None
+        )  # Returns True if URL exists, False otherwise
     except Exception as e:
         print(f"Error checking link: {e}")
         return False  # Returns False if an error occurs
+
 
 # Function to save property
 def save_property(property_data):
@@ -52,6 +54,7 @@ def save_property(property_data):
         print(f"Error saving property: {e}")
         return None
 
+
 # Function to save listing
 def save_listing(listing_data):
     """
@@ -65,6 +68,7 @@ def save_listing(listing_data):
         session.rollback()
         print(f"Error saving listing: {e}")
         return None
+
 
 # Function to sync data to Elasticsearch
 def sync_to_elasticsearch(listing_id):
@@ -91,8 +95,12 @@ def sync_to_elasticsearch(listing_id):
             "contact": listing.contact,
             "description": listing.description,
             "hash": listing.hash,
-            "date_created": listing.date_created.isoformat() if listing.date_created else None,
-            "date_removed": listing.date_removed.isoformat() if listing.date_removed else None,
+            "date_created": (
+                listing.date_created.isoformat() if listing.date_created else None
+            ),
+            "date_removed": (
+                listing.date_removed.isoformat() if listing.date_removed else None
+            ),
             "is_active": listing.is_active,
             "property_type": property_data.property_type,
             "size": property_data.size,
@@ -109,7 +117,7 @@ def sync_to_elasticsearch(listing_id):
             "building_floors": property_data.building_floors,
             "elevator": property_data.elevator,
             "garden_size_m2": property_data.garden_size_m2,
-            "garage_count": property_data.garage_count
+            "garage_count": property_data.garage_count,
         }
 
         # Index the document in Elasticsearch
@@ -117,6 +125,7 @@ def sync_to_elasticsearch(listing_id):
         print(f"Synced listing {listing.id} to Elasticsearch!")
     except Exception as e:
         print(f"Error syncing to Elasticsearch: {e}")
+
 
 # Example usage
 if __name__ == "__main__":
@@ -137,7 +146,7 @@ if __name__ == "__main__":
         "building_floors": 5,
         "elevator": True,
         "garden_size_m2": None,
-        "garage_count": 1
+        "garage_count": 1,
     }
 
     # Example listing data
@@ -158,11 +167,11 @@ if __name__ == "__main__":
         "electricity_utilities": None,
         "provision_rk": None,
         "downpayment_1x": None,
-        "downpayment_2x": None
+        "downpayment_2x": None,
     }
 
     # Step 1: Check if the listing URL already exists
-    if check_link(listing_data["url"]):
+    if check_link_exists(listing_data["url"]):
         print("Listing already exists in the database. Skipping...")
     else:
         # Step 2: Save property

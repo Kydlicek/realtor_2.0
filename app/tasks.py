@@ -1,18 +1,19 @@
 from celery_app import app
-from celery.schedules import crontab
 from scraper_config import SCRAPER_SOURCES
-from scrapers import idnes_scraper,sreality_scraper
+from scrapers import idnes_scraper, sreality_scraper
+
 
 @app.task
 def start_all_scrapers():
     """Spustí scraping pro všechny weby a kategorie."""
     for site, urls in SCRAPER_SOURCES.items():
         for category, path in urls.items():
-            if category == "base_url":  
+            if category == "base_url":
                 continue  # Přeskočíme base_url, není potřeba scrapovat
             full_url = urls["base_url"] + path
             print(f"🚀 Spouštím scraper pro {site} - {full_url}")
             scrape_new_listings.delay(full_url, site)
+
 
 @app.task
 def scrape_new_listings(full_url: str, source: str):
@@ -23,20 +24,3 @@ def scrape_new_listings(full_url: str, source: str):
         idnes_scraper(full_url).scrape_listings()
     elif source == "sreality":
         sreality_scraper(full_url).scrape_listings()
-
-
-@app.task
-def scrape_listing_details(url: str, source: str) -> str:
-    """Task pro scraping detailní stránky inzerátu."""
-    if source == "idnes":
-        idnes_scraper().process_detailed_listing(url)
-    elif source == "sreality":
-        sreality_scraper().process_detailed_listing(url)
-
-# Přidání periodického tasku pro Celery Beat
-app.conf.beat_schedule = {
-    "start-all-scrapers-every-15min": {
-        "task": "tasks.start_all_scrapers",
-        "schedule": crontab(minute="*/15"),  # Každých 15 minut
-    },
-}
