@@ -5,8 +5,8 @@ from datetime import datetime
 import os
 
 # Database connection
-DATABASE_URI = os.getenv("DATABASE_URI")
-# DATABASE_URI = 'postgresql://admin:Admin1234@postgres:5432/real_estate'
+# DATABASE_URI = os.getenv("DATABASE_URI")
+DATABASE_URI = 'postgresql://admin:Admin1234@postgres:5432/real_estate'
 engine = create_engine(DATABASE_URI)
 metadata = MetaData()
 Session = sessionmaker(bind=engine)
@@ -28,6 +28,7 @@ def check_link_exists(url):
         - True if the URL exists.
         - False if the URL does not exist or an error occurs.
     """
+    return False
     try:
         existing_listing = session.execute(
             listings.select().where(listings.c.url == url)
@@ -38,6 +39,7 @@ def check_link_exists(url):
     except Exception as e:
         print(f"Error checking link: {e}")
         return False  # Returns False if an error occurs
+    
 
 
 # Function to save property
@@ -45,6 +47,8 @@ def save_property(property_data):
     """
     Save property data to PostgreSQL.
     """
+    print(f'save property recieved {property_data}')
+    return True
     try:
         result = session.execute(properties.insert().values(**property_data))
         session.commit()
@@ -60,6 +64,8 @@ def save_listing(listing_data):
     """
     Save listing data to PostgreSQL.
     """
+    print(f'save listing recieved {listing_data}')
+    return True
     try:
         result = session.execute(listings.insert().values(**listing_data))
         session.commit()
@@ -127,63 +133,21 @@ def sync_to_elasticsearch(listing_id):
         print(f"Error syncing to Elasticsearch: {e}")
 
 
-# Example usage
-if __name__ == "__main__":
-    # Example property data
-    property_data = {
-        "property_type": "flat",
-        "size": 80.5,
-        "rooms": 3,
-        "gps_lat": 50.0755,
-        "gps_lon": 14.4378,
-        "construction_year": 2005,
-        "last_reconstruction_year": 2015,
-        "energy_rating": "B",
-        "has_balcony": True,
-        "has_parking": True,
-        "condition": "renovated",
-        "floor": 2,
-        "building_floors": 5,
-        "elevator": True,
-        "garden_size_m2": None,
-        "garage_count": 1,
-    }
 
-    # Example listing data
-    listing_data = {
-        "property_id": None,  # Will be set after saving the property
-        "source": "sreality.cz",
-        "external_id": "12345",
-        "url": "https://sreality.cz/flat/12345",
-        "price": 250000,
-        "rent": False,
-        "contact": "jan.novak@example.com",
-        "description": "Beautiful 3-room flat in Prague.",
-        "hash": "abc123",
-        "date_created": datetime.utcnow(),
-        "date_removed": None,
-        "is_active": True,
-        "rent_price": None,
-        "electricity_utilities": None,
-        "provision_rk": None,
-        "downpayment_1x": None,
-        "downpayment_2x": None,
-    }
+    # # Step 1: Check if the listing URL already exists
+    # if check_link_exists(listing_data["url"]):
+    #     print("Listing already exists in the database. Skipping...")
+    # else:
+    #     # Step 2: Save property
+    #     property_id = save_property(property_data)
+    #     if property_id:
+    #         print(f"Saved property with ID: {property_id}")
 
-    # Step 1: Check if the listing URL already exists
-    if check_link_exists(listing_data["url"]):
-        print("Listing already exists in the database. Skipping...")
-    else:
-        # Step 2: Save property
-        property_id = save_property(property_data)
-        if property_id:
-            print(f"Saved property with ID: {property_id}")
+    #         # Step 3: Save listing (link it to the property)
+    #         listing_data["property_id"] = property_id
+    #         listing_id = save_listing(listing_data)
+    #         if listing_id:
+    #             print(f"Saved listing with ID: {listing_id}")
 
-            # Step 3: Save listing (link it to the property)
-            listing_data["property_id"] = property_id
-            listing_id = save_listing(listing_data)
-            if listing_id:
-                print(f"Saved listing with ID: {listing_id}")
-
-                # Step 4: Sync to Elasticsearch
-                sync_to_elasticsearch(listing_id)
+    #             # Step 4: Sync to Elasticsearch
+    #             sync_to_elasticsearch(listing_id)
