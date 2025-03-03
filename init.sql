@@ -85,64 +85,16 @@ CREATE TABLE price_history (
     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- When this price was recorded
 );
 
-CREATE TABLE financials (
-    id SERIAL PRIMARY KEY,
-
-    -- 📌 Loan & Financing
-    down_payment NUMERIC(12,2),  
-    loan_amount NUMERIC(12,2),  
-    mortgage_payment NUMERIC(12,2),  
-    loan_to_value_ratio NUMERIC(6,2),
-    debt_service_coverage_ratio NUMERIC(6,2),  
-
-    -- 💰 Rental & Income Metrics
-    annual_rent NUMERIC(12,2),  
-    gross_rent_multiplier NUMERIC(6,2),  
-
-    -- 📈 Profitability Metrics
-    net_operating_income NUMERIC(12,2),  
-    cashflow NUMERIC(12,2),  
-    cap_rate NUMERIC(6,2),  
-    cash_on_cash_return NUMERIC(6,2),  
-
-    -- 💸 Expense Metrics
-    property_tax NUMERIC(12,2),  
-    insurance_cost NUMERIC(12,2),  
-    maintenance_cost NUMERIC(12,2),  
-    management_fees NUMERIC(12,2),  
-    operating_expenses NUMERIC(12,2),  
-
-    
-    -- 📊 Risk & Return Metrics
-    internal_rate_of_return NUMERIC(6,2),  
-    net_present_value NUMERIC(12,2),  
-    break_even_years NUMERIC(6,2),  
-
-    -- 📌 Additional Investment Metrics
-    after_tax_cashflow NUMERIC(12,2),  
-    real_cap_rate NUMERIC(6,2),  
-    real_npv NUMERIC(12,2),  
-    real_irr NUMERIC(6,2),  
-    renovation_roi NUMERIC(6,2),  
-    liquidity_score NUMERIC(6,2),  
-    holding_costs NUMERIC(12,2),  
-    brrrr_recycle_ratio NUMERIC(6,2),  
-
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
 CREATE TABLE macro_economic_data (
     id SERIAL PRIMARY KEY,
     interest_rate NUMERIC(5,2),  -- Mortgage interest rate
     inflation_rate NUMERIC(5,2),  -- General inflation
     risk_premium NUMERIC(5,2),  -- Risk factor for NPV calculations
     loan_term INT,  -- Standard loan term in years
-    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Create financials table for real estate investment analysis
+
 -- Financials Table for Real Estate Investment Analysis
 CREATE TABLE financials (
     id SERIAL PRIMARY KEY,
@@ -154,6 +106,9 @@ CREATE TABLE financials (
     mortgage_payment NUMERIC(12,2),  -- Monthly mortgage payment
     loan_to_value_ratio NUMERIC(6,2),  -- (Loan Amount / Property Price) * 100
     debt_service_coverage_ratio NUMERIC(6,2),  -- NOI / Annual Mortgage Payment
+    loan_paydown_return NUMERIC(6,2),  -- Return from paying down loan principal
+    interest_coverage_ratio NUMERIC(6,2),   -- EBITDA / Interest Expense
+    stressed_dscr NUMERIC(6,2),  -- DSCR under stressed conditions
 
 
     -- 💰 Rental & Income Metrics
@@ -161,28 +116,30 @@ CREATE TABLE financials (
     rental_yield NUMERIC(6,2),  -- (Annual Rent / Purchase Price) * 100
     gross_rent_multiplier NUMERIC(6,2),  -- Property Price / Annual Rent
     price_to_rent_ratio NUMERIC(6,2),  -- Purchase Price / Annual Rent
+    break_even_rent NUMERIC(12,2),  -- Minimum rent needed to break even
 
     -- 📈 Profitability Metrics
     net_operating_income NUMERIC(12,2),  -- NOI: Rent - Operating Expenses
     cashflow NUMERIC(12,2),  -- NOI - Mortgage Payments
     cap_rate NUMERIC(6,2),  -- (NOI / Property Price) * 100
     cash_on_cash_return NUMERIC(6,2),  -- (Annual Cashflow / Down Payment) * 100
+    equity_multiple NUMERIC(6,2),  -- Total Cashflow / Equity Invested
 
     -- 📊 Risk & Return Metrics
+    compounded_annual_growth_rate NUMERIC(6,2),  -- CAGR over holding period
     internal_rate_of_return NUMERIC(6,2),  -- Estimated IRR over holding period
     net_present_value NUMERIC(12,2),  -- Discounted future cashflows
     break_even_years NUMERIC(6,2),  -- Years to recoup initial investment
-    appreciation_rate NUMERIC(5,2),  -- Assumed property value growth rate
 
     -- 💸 Expense Metrics
     property_tax NUMERIC(12,2),  -- Annual property tax
     insurance_cost NUMERIC(12,2),  -- Annual insurance cost
     maintenance_cost NUMERIC(12,2),  -- Annual maintenance cost
     management_fees NUMERIC(12,2),  -- Annual property management fees
-    vacancy_rate NUMERIC(6,2),  -- % of time property is expected to be vacant
     operating_expenses NUMERIC(12,2),  -- Sum of all expenses
 
     -- 📌 Additional Investment Metrics
+    
     after_tax_cashflow NUMERIC(12,2),  -- Cashflow after estimated taxes
     real_cap_rate NUMERIC(6,2),  -- Inflation-adjusted Cap Rate
     real_npv NUMERIC(12,2),  -- Inflation-adjusted Net Present Value
@@ -194,5 +151,6 @@ CREATE TABLE financials (
     brrrr_recycle_ratio NUMERIC(6,2),  -- % of cash recovered in BRRRR strategy
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
 );

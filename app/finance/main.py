@@ -78,11 +78,12 @@ def calculate_financials(
         1 - (1 + (stressed_interest_rate / 100 / 12)) ** -num_payments
     )
     stressed_dscr = net_operating_income / (stressed_monthly_payment * 12)
-    break_even_rent = total_expenses / 12
+    break_even_rent = (total_expenses + annual_mortgage_payment) / (
+        12 * (1 - vacancy_rate)
+    )
     cagr = ((purchase_price * (1 + appreciation_rate) ** 5) / purchase_price) ** (
         1 / 5
     ) - 1
-    market_volatility_index = market_volatility
 
     return {
         "down_payment": down_payment,
@@ -115,7 +116,6 @@ def calculate_financials(
         "stressed_dscr": stressed_dscr,
         "break_even_rent": break_even_rent,
         "compounded_annual_growth_rate": cagr,
-        "market_volatility_index": market_volatility_index,
     }
 
 
