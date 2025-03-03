@@ -23,7 +23,7 @@ def make_prompt(prompt, purpose):
     }
 
     data = {
-        "model": "deepseek-r1:1.5b",
+        "model": "gemma:2b",
         "messages": [
             {"role": "system", "content": f"{purpose}"},
             {"role": "user", "content": f"{prompt}"}

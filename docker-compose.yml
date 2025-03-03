@@ -45,7 +45,7 @@ services:
       CELERY_RESULT_BACKEND: redis://redis:6379/0
       DATABASE_URI: postgresql://admin:Admin1234@postgres:5432/real_estate
       ELASTICSEARCH_HOST: elasticsearch
-      API_KEY: sk-472f76cede8e41278f7bb1b8a01be1bf
+      API_KEY: sk-1c976bc892554124a23dd746ce79720a
       PYTHONPATH: /app
     # Make sure the app module is correctly specified
     command: celery -A celery_app worker --loglevel=info --concurrency=4
@@ -61,7 +61,7 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities: [ gpu ]
+            - capabilities: [gpu]
     volumes:
       - ollama:/root/.ollama
       - open-webui:/app/backend/data

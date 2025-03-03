@@ -22,7 +22,7 @@ class BaseScraper(ABC):
     def check_listings_exists(self, listing) -> bool:
         return False
 
-    def fetch_page(self, url: str):
+    def fetch_soup(self, url: str):
         """Fetches a webpage and returns BeautifulSoup object."""
         print(f"📥 Fetching {url}")
         response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
@@ -30,6 +30,16 @@ class BaseScraper(ABC):
             print(f"❌ Failed to fetch {url} (status {response.status_code})")
             return None
         return BeautifulSoup(response.text, "html.parser")
+    
+    def fetch_json(self, url:str):
+        """Fetches a webpage and returns BeautifulSoup object."""
+        print(f"📥 Fetching {url}")
+        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        if response.status_code != 200:
+            print(f"❌ Failed to fetch {url} (status {response.status_code})")
+            return None
+        return response.json()
+    
 
     async def scrape_listings(self):
         """Scrapes listings from multiple pages."""
@@ -37,7 +47,7 @@ class BaseScraper(ABC):
         url = self.base_url
 
         while url:
-            soup = self.fetch_page(url)
+            soup = self.fetch_soup(url)
             if not soup:
                 break
             listings_urls = self.extract_listings(soup)
@@ -56,27 +66,14 @@ class BaseScraper(ABC):
                 await asyncio.to_thread(self.process_detailed_listing, url)
 
     def process_detailed_listing(self, url):
-        soup = self.fetch_page(url)
-        prop = self.get_property(soup)
-        if not self.check_property_exists(prop):
-            save_property(prop)
-
-        listing = self.get_listing(soup)
-        if not self.check_listings_exists(listing):
-            save_listing(self.get_listing(url))
-
-        return True
-
-    @abstractmethod
-    def get_property(self, url) -> object:
-        """Returns proccessed property object."""
         pass
 
-    @abstractmethod
-    def get_listing(self, url) -> object:
-        """Returns proccessed listing object."""
-        pass
 
+
+    @abstractmethod
+    def get_listing_property(self,url):
+        """returns Property_listing."""
+        pass
     @abstractmethod
     def extract_listings(self, soup) -> list:
         """Extracts listing URLs from the page. and returns a list of URLs."""

@@ -35,102 +35,84 @@ class SrealityScraper(BaseScraper):
         else:
             return None
 
-    def get_property(self, soup) -> object:
-        
-        """Returns proccessed property object."""
-        
-        return 
-        
-        
-    def get_listing(self, soup) -> object:
-        """Returns proccessed listing object."""
-        print(f"Fetching listing details for {url}... (placeholder)")
-
-        return {}  # Return an empty dictionary instead of None
-
+    
     def get_last_page(self):
+
         return 10
+    
+
+    def find_in_items(self, data, name):
+        items = data["items"]
+        for dic in items:
+            if dic["name"] == name:
+                return dic["value"]
+            
+    def get_listing_property(self,url):
+        # input_url= https://www.sreality.cz/detail/pronajem/byt/2+kk/praha-nove-mesto-stepanska/3660591692
+        h_id = url.split('/')[-1]
+        api_url = f'https://www.sreality.cz/api/cs/v2/estates/{h_id}'
+        res = self.fetch_json(api_url)
+        description = res['text']['value']
+        contact = res["_embedded"]["seller"]
+        lat= res.get("map", {}).get("lat", None)
+        lon= res.get("map", {}).get("lon", None)
+        price = res["price_czk"]["value_raw"]
+        rec_data = res.get("recommendations_data", {})
+        # Extract values for each key in additional_info
+        floor = self.find_in_items(res, "Podlaží")[0] if self.find_in_items(res, "Podlaží") else None
+        balcony = rec_data.get("balcony", None)
+        m2 = self.find_in_items(res, "Užitná ploch") if self.find_in_items(res, "Užitná ploch") else None
+        parking= self.find_in_items(res, 'Parkování')
+        if parking == True:
+            parking = 1
+        cellar_m2= self.find_in_items(res,'Sklep') if self.find_in_items(res, "Užitná ploch") else 0
+        elevator = self.find_in_items(res, 'Výtah')
+        condition = self.find_in_items(res, 'Stav objektu')
+        furnished = self.find_in_items(res, "Vybavení") if self.find_in_items(res, "Vybavení") else None
+        garden_m2 = self.find_in_items(res,'Plocha zahrady')if self.find_in_items(res, "Plocha zahrady") else None
+        
+        energy_class = self.find_in_items(res, "Energetická náročnost budovy")[6:7] if len(self.find_in_items(res, "Energetická náročnost budovy")) >= 7 else None
+        images = [img["_links"]["self"]["href"] for img in res.get("_embedded", {}).get("images", [])]
+        prompt = f'here is describtion of property return me object like property_type: xxx, rooms: xxx , transaction xxx {description}'
+        purpose = 'u are realestate agent and from describtion of property u have to know what property type it is, what how many rooms are there 2+KK, 1+kk, 3+kk etc.., also what type of transaction it is order rent or sell'
+        make_prompt(prompt=prompt,purpose=purpose)
+        
+        prop = {
+            'property_type': 'x',
+            'size_m2': m2,
+            'rooms': 'x',
+            'gps_lat':lat,
+            'gps_lon': lon,
+            'energy_rating':energy_class,
+            'has_balcony':balcony,
+            'parking':parking,
+            'cellar_m2':cellar_m2,
+            'condition':condition,
+            'floor': floor,
+            'elevator': elevator,
+            'garden_size_m2': garden_m2,
+            'furnished': furnished,
+        }
+        listing = {
+            'source': 'x',
+            'url':'x',
+            'images': images,
+            'price':price,
+            'transaction':'x',
+            'contact': contact,
+            'description': description,
+            'is_active': 'x',
+            'rent_price': price,
+
+            
+
+        }
+        
+
 
 
 url = 'https://www.sreality.cz/hledani/pronajem/byty'
 s = SrealityScraper(url,'sreality')
 # asyncio.run(s.scrape_listings())
-new_url ='https://www.sreality.cz/api/cs/v2/estates/149500492'
-soup = s.fetch_page(new_url)
-print(soup)
-
-
-
-def extract_by_ai(data):
-    property_schema = {
-  "property_type": "string (e.g., Apartment, House)",
-  "size": "float (in square meters)",
-  "rooms": "integer",
-  "gps_lat": "float (latitude)",
-  "gps_lon": "float (longitude)",
-  "construction_year": "integer",
-  "last_reconstruction_year": "integer",
-  "energy_rating": "string (e.g., A, B, C)",
-  "has_balcony": "boolean",
-  "has_parking": "boolean",
-  "condition": "string (e.g., Excellent, Good, Renovated)",
-  "floor": "integer",
-  "building_floors": "integer",
-  "elevator": "boolean",
-  "garden_size_m2": "float",
-  "garage_count": "integer",
-  "created_at": "string (ISO 8601 timestamp)",
-  "updated_at": "string (ISO 8601 timestamp)"
-}
-
-    listing_schema = {
-  "external_id": "string",
-  "images_urls": "list of strings (URLs)",
-  "price": "float",
-  "rent": "boolean",
-  "contact": "string (email or phone)",
-  "description": "string",
-  "hash": "string",
-  "date_created": "string (ISO 8601 timestamp)",
-  "date_removed": "string (ISO 8601 timestamp or null)",
-  "is_active": "boolean",
-  "rent_price": "float or null",
-  "electricity_utilities": "float",
-  "provision_rk": "float",
-  "downpayment_1x": "float",
-  "downpayment_2x": "float",
-  "created_at": "string (ISO 8601 timestamp)",
-  "updated_at": "string (ISO 8601 timestamp)"
-}
-
-    purpose = f"""
-You are a real estate data parser. Your task is to convert unstructured input data into two structured JSON objects: `property` and `listing`.
-
-Rules:
-1. Follow the exact structure and key names from the schemas below.
-2. Use the correct data types (e.g., boolean, float, string).
-3. Return ONLY the JSON objects. No explanations, notes, or extra text.
-4. For missing data, use `null` (not "Null" or empty strings).
-5. Ignore fields not mentioned in the schemas.
-
-Schemas:
-- Property Schema: {property_schema}
-- Listing Schema: {listing_schema}
-"""
-
-    prompt = f"""Analyze this JSON structure and extract values based on these patterns:
-    
-    1. Property Type: Look for 'categoryMainCb.name' or text containing 'byt'/'dům'
-    2. Size: Find numbers with 'm²' or 'size'/'velikost' in key
-    3. Price: Search for 'priceCzk' or numbers with 'Kč'/'CZK'
-    4. Coordinates: Look for 'latitude'/'longitude' or 'gps' in keys
-    5. Dates: Find ISO dates or Czech date formats (dd. mm. yyyy)
-    6. Rooms: Extract from '2+kk' patterns or 'pokojů' in text
-    
-    Return only JSON matching these schemas with null for missing values."""
-    return make_prompt(prompt=prompt,purpose=purpose)
-
-
-
-# res = extract_by_ai(text_to_analyze)
-# print(res)
+test= 'https://www.sreality.cz/detail/pronajem/byt/2+kk/praha-nove-mesto-stepanska/3660591692'
+s.get_listing_property(test)
