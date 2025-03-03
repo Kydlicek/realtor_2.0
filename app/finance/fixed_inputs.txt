@@ -1,0 +1,22 @@
+    # Constants & Assumptions
+    purchase_price = 1000000
+
+    # financial inputs
+    down_payment_pr = 0.20  # 20% Down Payment
+    loan_term = 25  # 25 years
+    interest_rate = 7  # 7%
+
+    # rental income
+    monthly_rent = 5000  # 5,000 per month
+    vacancy_rate = 0.05  # 5% Vacancy Rate
+
+    # Expense Inputs
+    property_tax = 5000  # 5,000 per year
+    insurance_cost = 1000  # 1,000 per year
+    maintenance_cost = 2000  # 2,000 per year
+    management_fees = 0.10  # 10% of Rental Income
+
+    # investment assumtions
+    inflation_rate = 4  # 4%
+    risk_preimum = 0.05  # 5%
+    appreciation_rate = 0.03  # 3%

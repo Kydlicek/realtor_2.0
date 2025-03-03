@@ -1,0 +1,22 @@
+📊 Suggested UI Display for Listings
+1️⃣ Default Quick View (On Listing Page)
+📌 Show essential indicators at a glance:
+✅ Mortgage Payment (based on default assumptions)
+✅ Rental Yield
+✅ Cap Rate
+✅ Cashflow
+✅ DSCR (Debt Service Coverage Ratio)
+
+📌 Visual Enhancements:
+
+Color Coding (Green = good, Red = risky)
+Investment Score (1-100) – based on key metrics
+Icons for easy readability
+👉 Example UI Concept:
+
+Indicator	Value	Status
+🏠 Monthly Mortgage	$1,200	🔵 Neutral
+💰 Rental Yield	5.2%	🟢 Good
+📈 Cap Rate	6.8%	🟢 Great
+📊 Cashflow	+$300	🟢 Positive
+💳 DSCR	1.3x	🟡 Acceptable

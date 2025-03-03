@@ -1,0 +1,59 @@
+1️⃣ Basic Indicators (For Quick Analysis)
+These are easy to understand and help users quickly evaluate an investment.
+
+Indicator	Formula	What It Tells You	Interpretation
+Mortgage Payment	Based on interest rate & loan term	Monthly mortgage cost	Lower = Better cashflow
+Rental Yield (%)	(Annual Rent / Property Price) * 100	Return from rent alone	Higher = Better rental income
+Net Operating Income (NOI)	Annual Rent - Expenses	Profit after costs	Higher = More profitable property
+Cashflow	NOI - Mortgage Payment	Profit after mortgage	Positive = Cash-generating property
+Cap Rate (%)	(NOI / Property Price) * 100	Profitability before financing	Higher = Higher return potential
+Debt Service Coverage Ratio (DSCR)	NOI / Annual Mortgage Payment	Can the property cover debt?	Above 1.2 = Safer investment
+Cash-on-Cash Return (%)	(Annual Cashflow / Down Payment) * 100	ROI on your cash investment	Higher = More efficient use of capital
+📌 💡 Suitable for: Beginner investors, quick property evaluations
+
+Advanced Indicators (For In-Depth Analysis)
+These help experienced investors optimize their decisions and compare properties with precision.
+
+Indicator	Formula	What It Tells You	Interpretation
+Gross Rental Income	Monthly Rent * 12	Total rent before expenses	Higher = More income
+Operating Expense Ratio (OER)	(Operating Expenses / Gross Rental Income) * 100	% of rent spent on costs	Lower = More efficient property
+Payback Period (Years)	Total Investment / Annual Cashflow	Years to break even	Lower = Faster return
+Vacancy Rate (%)	(Vacant Units / Total Units) * 100	% of units unoccupied	Lower = Higher demand
+Loan-to-Cost Ratio (LTC)	(Loan Amount / Total Cost) * 100	How much is financed vs. paid in cash	Higher = More debt risk
+Rent-to-Value Ratio	(Monthly Rent / Property Price) * 100	Rent potential vs. purchase price	Higher = More rental return
+Internal Rate of Return (IRR)	Advanced formula	Long-term profitability	Higher = Better return over time
+Net Present Value (NPV)	Present value of future cashflows	Expected future earnings	Positive = Profitable investment
+📌 💡 Suitable for: Investors who want detailed financial projections
+
+ Risk & Market-Based Indicators (For Risk-Averse Investors)
+These indicators help investors assess potential risks and external market conditions.
+
+Indicator	Formula	What It Tells You	Interpretation
+Risk Premium (%)	Market Return - Risk-Free Rate	Extra return expected for taking investment risk	Higher = Higher potential return but more risk
+Interest Rate Sensitivity	Based on mortgage rate changes	Impact of rate hikes on mortgage payments	Higher = More vulnerable to interest rate hikes
+Inflation-Adjusted Return (%)	Investment Return - Inflation Rate	Real return after adjusting for inflation	Higher = Better purchasing power retention
+Economic Vacancy Rate (%)	(Lost Rental Income / Potential Rental Income) * 100	Income loss from unoccupied units	Lower = More stable cashflow
+Break-Even Occupancy (%)	(Total Expenses + Debt Payments) / Gross Rental Income	Minimum occupancy needed to avoid losses	Lower = Less risky investment
+📌 💡 Suitable for: Risk-conscious investors who analyze economic & market factors before investing
+
+Value-Add & Growth Potential Indicators (For Long-Term Investors)
+These indicators help investors evaluate the growth potential of a property.
+
+Indicator	Formula	What It Tells You	Interpretation
+Forced Appreciation (%)	(New Value - Purchase Price) / Purchase Price * 100	Value increase due to upgrades	Higher = More value added through improvements
+Equity Growth Rate (%)	(Equity Increase / Initial Investment) * 100	Growth in property ownership value	Higher = More wealth creation
+Price per Square Meter (€ / m²)	Property Price / Square Meters	Price efficiency based on space	Lower = More space for the price
+Market Rent Growth Rate (%)	((Future Rent - Current Rent) / Current Rent) * 100	Expected rent increase over time	Higher = Better future rental income
+Cost Segregation Benefit	Tax depreciation estimates	Tax savings on property improvements	Higher = More tax efficiency
+📌 💡 Suitable for: Investors who focus on long-term appreciation & value-add projects
+
+📌 5️⃣ Tax Efficiency & Legal Indicators (For Tax-Conscious Investors)
+These indicators help optimize tax strategies and ensure compliance.
+
+Indicator	Formula	What It Tells You	Interpretation
+Depreciation Tax Benefit (€ / year)	Based on property type	Tax savings from depreciation	Higher = More tax reduction
+Capital Gains Tax Estimate (€)	Based on local tax laws	Expected tax on sale profit	Lower = Higher after-tax return
+1031 Exchange Eligibility	Based on reinvestment rules	Ability to defer capital gains taxes	Eligible = More tax-efficient sale
+Real Estate Tax Deduction (€ / year)	Total deductible expenses	Total tax-deductible property costs	Higher = Lower taxable income
+📌 💡 Suitable for: Investors who optimize their tax savings & legal compliance
+
