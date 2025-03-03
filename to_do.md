@@ -15,7 +15,7 @@
 
 
 [] API - Request from webapp, Returns listings with pagination, - Custom Queries based on Roi, Location, size, etc ... listing time Search by liquidity
-[] API - Request with any listing from different app and will return our listing with financials
+[] API - Request with any listing from different app and will return our listing with financials + add pagination
 
 
 [] Heatmap - Liquidity map, how long listings stayed at each place on map,
