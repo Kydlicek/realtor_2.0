@@ -89,8 +89,8 @@ CREATE TABLE macro_economic_data (
     id SERIAL PRIMARY KEY,
     interest_rate NUMERIC(5,2),  -- Mortgage interest rate
     inflation_rate NUMERIC(5,2),  -- General inflation
+    vacancy_rate NUMERIC(5,2), --Rate at wich rents are empty
     risk_premium NUMERIC(5,2),  -- Risk factor for NPV calculations
-    loan_term INT,  -- Standard loan term in years
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -100,10 +100,29 @@ CREATE TABLE financials (
     id SERIAL PRIMARY KEY,
     listing_id INT REFERENCES listings(id) ON DELETE CASCADE,  -- Link to property listing
 
+        -- 🏦 Core Loan Parameters
+    purchase_price NUMERIC(12,2),  -- Property purchase price
+    down_payment_pr NUMERIC(6,4),  -- Down payment percentage (20% = 0.20)
+    loan_term INT,  -- Loan duration in years
+    interest_rate NUMERIC(6,4),  -- Annual interest rate (7% = 0.07)
+
+    -- 🏠 Mortgage Calculations (Could be calculated fields)
+    loan_amount NUMERIC(12,2),  -- purchase_price * (1 - down_payment_pr)
+    mortgage_payment NUMERIC(12,2),  -- Monthly payment (PMT calculation)
+    loan_to_value_ratio NUMERIC(6,2),  -- (loan_amount / purchase_price) * 100
+
+    -- 📊 Rental Income Basics
+    monthly_rent NUMERIC(12,2),  -- Base monthly rental income
+    vacancy_rate NUMERIC(6,4),  -- Vacancy allowance (5% = 0.05)
+    management_fee_rate NUMERIC(6,4),  -- Management fee percentage (10% = 0.10)
+
+    -- 🌐 Economic Assumptions
+    inflation_rate NUMERIC(6,4),  -- Annual inflation assumption
+    risk_premium NUMERIC(6,4),  -- Risk premium for discount rates
+    appreciation_rate NUMERIC(6,4),  -- Expected annual appreciation
+
     -- 🏠 Mortgage & Loan Metrics
     down_payment NUMERIC(12,2),  -- Initial cash investment
-    loan_amount NUMERIC(12,2),  -- Loan size (Purchase Price - Down Payment)
-    mortgage_payment NUMERIC(12,2),  -- Monthly mortgage payment
     loan_to_value_ratio NUMERIC(6,2),  -- (Loan Amount / Property Price) * 100
     debt_service_coverage_ratio NUMERIC(6,2),  -- NOI / Annual Mortgage Payment
     loan_paydown_return NUMERIC(6,2),  -- Return from paying down loan principal
