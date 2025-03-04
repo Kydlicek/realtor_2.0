@@ -1,139 +1,159 @@
 import numpy as np
 import numpy_financial as npf
 
-
 def calculate_financials(
     purchase_price,
-    down_payment_pr,
+    down_payment_pr,       # As decimal (0.2 for 20%)
     loan_term,
-    interest_rate,
+    interest_rate,          # As decimal (0.07 for 7%)
     monthly_rent,
-    vacancy_rate,
+    vacancy_rate,           # As decimal (0.05 for 5%)
     property_tax,
     insurance_cost,
     maintenance_cost,
-    management_fees,
-    inflation_rate,
-    risk_premium,
-    appreciation_rate,
-    interest_rate_shock=1.0,  # Percentage increase for stress test
-    market_volatility=0.05,  # Hypothetical volatility index
+    management_fees,        # As decimal (0.1 for 10%)
+    inflation_rate,         # As decimal (0.04 for 4%)
+    risk_premium,           # As decimal (0.05 for 5%)
+    appreciation_rate,      # As decimal (0.03 for 3%)
+    selling_costs=0.05,     # As decimal (5% selling costs)
+    interest_rate_shock=0.01,  # As decimal (1% shock)
 ):
-    # Loan & Mortgage Calculations
+    # Convert annual rates to monthly where needed
+    monthly_interest_rate = interest_rate / 12
+    num_payments = loan_term * 12
+
+    # --- Loan Calculations ---
     down_payment = purchase_price * down_payment_pr
     loan_amount = purchase_price - down_payment
-    monthly_interest_rate = interest_rate / 100 / 12
-    num_payments = loan_term * 12
-    mortgage_payment = (loan_amount * monthly_interest_rate) / (
-        1 - (1 + monthly_interest_rate) ** -num_payments
+    
+    # Mortgage payment using numpy financial
+    mortgage_payment = -npf.pmt(
+        monthly_interest_rate,
+        num_payments,
+        loan_amount
     )
-
-    # Rental Income
+    
+    # --- Cash Flow Calculations ---
+    # Annual rental income (net of vacancy)
     annual_rent = monthly_rent * 12 * (1 - vacancy_rate)
-    rental_yield = (annual_rent / purchase_price) * 100
-    gross_rent_multiplier = purchase_price / annual_rent
-    price_to_rent_ratio = purchase_price / annual_rent
-
-    # Expenses
+    
+    # Annual expenses
     total_expenses = (
         property_tax
         + insurance_cost
         + maintenance_cost
-        + (management_fees * annual_rent)
+        + (annual_rent * management_fees)
     )
-
-    # Profitability
+    
+    # Net Operating Income
     net_operating_income = annual_rent - total_expenses
+    
+    # Annual mortgage payments
     annual_mortgage_payment = mortgage_payment * 12
+    
+    # Cash flow before taxes
     cashflow = net_operating_income - annual_mortgage_payment
-    cap_rate = (net_operating_income / purchase_price) * 100
-    cash_on_cash_return = (cashflow / down_payment) * 100
-
-    # Risk & Return Metrics
-    cashflows = [-down_payment] + [cashflow] * loan_term
-    internal_rate_of_return = npf.irr(cashflows) * 100
-    net_present_value = npf.npv(risk_premium, [cashflow] * loan_term) - down_payment
-    break_even_years = down_payment / cashflow if cashflow > 0 else None
-
-    # Additional Metrics
-    after_tax_cashflow = cashflow * (1 - 0.2)  # Assuming 20% tax
-    real_cap_rate = cap_rate - inflation_rate
-    real_npv = net_present_value / ((1 + inflation_rate / 100) ** loan_term)
-    real_irr = internal_rate_of_return - inflation_rate
-    renovation_roi = appreciation_rate * 100  # Simplified assumption
-    liquidity_score = 1 / gross_rent_multiplier  # Proxy for liquidity
-    holding_costs = total_expenses / 12
-    brrrr_recycle_ratio = (loan_amount / purchase_price) * 100
-
-    # New Financial Indicators
-    equity_multiple = (cashflow * loan_term) / down_payment
-    principal_reduction = loan_amount * (
-        1 - (1 + monthly_interest_rate) ** -num_payments
+    
+    # --- Return Metrics ---
+    # Cap rate calculation
+    cap_rate = net_operating_income / purchase_price
+    
+    # Cash on cash return
+    cash_on_cash_return = cashflow / down_payment
+    
+    # --- IRR/NPV with Terminal Value ---
+    # Project future property value
+    future_value = purchase_price * (1 + appreciation_rate) ** loan_term
+    net_proceeds = future_value * (1 - selling_costs)  # After selling costs
+    
+    # Create cash flow array
+    cashflows = [-down_payment] + [cashflow] * (loan_term - 1) + [cashflow + net_proceeds]
+    
+    # Calculate IRR/NPV
+    try:
+        internal_rate_of_return = npf.irr(cashflows)
+    except:
+        internal_rate_of_return = np.nan
+    
+    net_present_value = npf.npv(risk_premium, cashflows)
+    
+    # --- Debt Metrics ---
+    # Calculate total interest paid
+    total_principal = loan_amount
+    total_payments = mortgage_payment * num_payments
+    total_interest = total_payments - total_principal
+    
+    # First year interest calculation
+    per_period_principal = npf.ppmt(
+        monthly_interest_rate,
+        np.arange(1, 13),
+        num_payments,
+        loan_amount
     )
-    loan_paydown_return = principal_reduction / down_payment
-    interest_expense = loan_amount * (interest_rate / 100)
-    interest_coverage_ratio = net_operating_income / interest_expense
-    stressed_interest_rate = interest_rate + interest_rate_shock
-    stressed_monthly_payment = (loan_amount * (stressed_interest_rate / 100 / 12)) / (
-        1 - (1 + (stressed_interest_rate / 100 / 12)) ** -num_payments
+    per_period_interest = npf.ipmt(
+        monthly_interest_rate,
+        np.arange(1, 13),
+        num_payments,
+        loan_amount
     )
-    stressed_dscr = net_operating_income / (stressed_monthly_payment * 12)
-    break_even_rent = (total_expenses + annual_mortgage_payment) / (
-        12 * (1 - vacancy_rate)
+    first_year_interest = abs(sum(per_period_interest))
+    
+    # --- Risk Metrics ---
+    # Stress test calculations
+    stressed_rate = interest_rate + interest_rate_shock
+    stressed_payment = -npf.pmt(
+        stressed_rate/12,
+        num_payments,
+        loan_amount
     )
-    cagr = ((purchase_price * (1 + appreciation_rate) ** 5) / purchase_price) ** (
-        1 / 5
-    ) - 1
-
+    
     return {
-        "down_payment": down_payment,
-        "loan_amount": loan_amount,
-        "mortgage_payment": mortgage_payment,
-        "loan_to_value_ratio": (loan_amount / purchase_price) * 100,
-        "debt_service_coverage_ratio": net_operating_income / annual_mortgage_payment,
-        "annual_rent": annual_rent,
-        "rental_yield": rental_yield,
-        "gross_rent_multiplier": gross_rent_multiplier,
-        "price_to_rent_ratio": price_to_rent_ratio,
-        "net_operating_income": net_operating_income,
-        "cashflow": cashflow,
-        "cap_rate": cap_rate,
-        "cash_on_cash_return": cash_on_cash_return,
-        "internal_rate_of_return": internal_rate_of_return,
-        "net_present_value": net_present_value,
-        "break_even_years": break_even_years,
-        "after_tax_cashflow": after_tax_cashflow,
-        "real_cap_rate": real_cap_rate,
-        "real_npv": real_npv,
-        "real_irr": real_irr,
-        "renovation_roi": renovation_roi,
-        "liquidity_score": liquidity_score,
-        "holding_costs": holding_costs,
-        "brrrr_recycle_ratio": brrrr_recycle_ratio,
-        "equity_multiple": equity_multiple,
-        "loan_paydown_return": loan_paydown_return,
-        "interest_coverage_ratio": interest_coverage_ratio,
-        "stressed_dscr": stressed_dscr,
-        "break_even_rent": break_even_rent,
-        "compounded_annual_growth_rate": cagr,
+        # Core metrics
+        'down_payment': down_payment,
+        'loan_amount': loan_amount,
+        'monthly_payment': mortgage_payment,
+        'annual_mortgage': annual_mortgage_payment,
+        
+        # Returns
+        'cash_on_cash': cash_on_cash_return,
+        'cap_rate': cap_rate,
+        'irr': internal_rate_of_return,
+        'npv': net_present_value,
+        
+        # Debt analysis
+        'total_interest': total_interest,
+        'first_year_interest': first_year_interest,
+        'dscr': net_operating_income / annual_mortgage_payment,
+        'stressed_dscr': net_operating_income / (stressed_payment * 12),
+        
+        # Property value
+        'appreciated_value': future_value,
+        'net_sale_proceeds': net_proceeds,
+        
+        # Ratios
+        'ltv': loan_amount / purchase_price,
+        'rent_yield': annual_rent / purchase_price,
     }
-
 
 # Example Usage
 if __name__ == "__main__":
-    financials = calculate_financials(
-        purchase_price=1000000,
+    results = calculate_financials(
+        purchase_price=1_000_000,
         down_payment_pr=0.20,
         loan_term=25,
-        interest_rate=7,
-        monthly_rent=5000,
+        interest_rate=0.07,
+        monthly_rent=5_000,
         vacancy_rate=0.05,
-        property_tax=5000,
-        insurance_cost=1000,
-        maintenance_cost=2000,
+        property_tax=5_000,
+        insurance_cost=1_000,
+        maintenance_cost=2_000,
         management_fees=0.10,
-        inflation_rate=4,
+        inflation_rate=0.04,
         risk_premium=0.05,
         appreciation_rate=0.03,
     )
-    print(financials)
+    
+    # Format output
+    for k, v in results.items():
+        if isinstance(v, float):
+            print(f"{k:25}: {v:10.2%}" if 'rate' in k else f"{k:25}: {v:10,.2f}")

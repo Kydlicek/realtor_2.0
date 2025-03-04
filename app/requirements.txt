@@ -7,3 +7,5 @@ celery
 
 sqlalchemy
 elasticsearch
+numpy_financial
+numpy

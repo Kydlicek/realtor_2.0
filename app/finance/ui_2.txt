@@ -1,0 +1,64 @@
+🏠 Mortgage & Loan Metrics
+Loan-to-Value Ratio (LTV)
+
+Good: < 60% (Low risk, high equity)
+Medium: 60% - 80% (Moderate leverage)
+Bad: > 80% (High risk, low equity)
+Debt Service Coverage Ratio (DSCR)
+
+Good: > 1.5 (Strong cash flow)
+Medium: 1.2 - 1.5 (Acceptable)
+Bad: < 1.2 (Risk of negative cash flow)
+💰 Rental & Income Metrics
+Rental Yield (%)
+
+Good: > 8% (High yield, good return)
+Medium: 5% - 8% (Average)
+Bad: < 5% (Low yield, less profitable)
+Price-to-Rent Ratio
+
+Good: < 15 (Affordable, strong rent potential)
+Medium: 15 - 20 (Balanced)
+Bad: > 20 (Expensive, slow ROI)
+📈 Profitability Metrics
+Cap Rate (%)
+
+Good: > 6% (High profitability)
+Medium: 4% - 6% (Average)
+Bad: < 4% (Low return)
+Cash-on-Cash Return (%)
+
+Good: > 10% (Strong return)
+Medium: 5% - 10% (Acceptable)
+Bad: < 5% (Weak return)
+📊 Risk & Return Metrics
+Internal Rate of Return (IRR)
+
+Good: > 12% (Strong long-term return)
+Medium: 8% - 12% (Acceptable)
+Bad: < 8% (Weak investment)
+Break-even Years
+
+Good: < 10 years (Quick ROI)
+Medium: 10 - 20 years (Acceptable)
+Bad: > 20 years (Long payback period)
+💸 Expense Metrics
+Operating Expenses as % of Income
+Good: < 30% (Efficient)
+Medium: 30% - 50% (Average)
+Bad: > 50% (High expenses)
+📌 Additional Investment Metrics
+Liquidity Score
+
+Good: > 0.10 (High liquidity, easy to sell)
+Medium: 0.05 - 0.10 (Average)
+Bad: < 0.05 (Hard to sell)
+Market Volatility Index
+
+Good: < 0.05 (Stable)
+Medium: 0.05 - 0.15 (Moderate risk)
+Bad: > 0.15 (High risk, volatile)
+This framework allows for color coding:
+
+🟢 Green (Good)
+🟡 Yellow (Medium)
