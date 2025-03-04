@@ -6,7 +6,15 @@ import asyncio
 
 
 class BaseScraper(ABC):
-    def __init__(self, base_url: str, source: str):
+    def __init__(
+        self,
+        base_url: str,
+        source: str,
+        nationality: str,
+        property_type: str,
+        currency: str,
+        rent: bool,
+    ):
         """
         Initializes the scraper with the base URL and source name.
 

@@ -60,16 +60,16 @@ CREATE TABLE listings (
     building_fees FLOAT DEFAULT 0,  -- Additional fees for trash, maintenance, etc.
     electricity_utilities FLOAT DEFAULT 0,  -- Monthly electricity/utilities
     provision_rk FLOAT DEFAULT 0,  -- Commission for the real estate agency
+    transaction_type ENUM('rent','sale') NOT NULL DEFAULT 'sale',  -- Currency type
     currency ENUM('EUR', 'USD', 'CZK', 'GBP') NOT NULL DEFAULT 'CZK',  -- Currency type
 
     -- Contact Information (Stored as JSON)
     contact JSONB,
 
     -- Listing Status
-    listing_status ENUM('active', 'expired', 'sold', 'rented', 'removed') DEFAULT 'active',
+    listing_status ENUM('active', 'removed') DEFAULT 'active',
 
     -- Timestamps
-    listed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- When it was first listed
     date_removed TIMESTAMP,  -- When the listing was removed
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -80,7 +80,7 @@ CREATE TABLE price_history (
     property_id INT REFERENCES properties(id) ON DELETE CASCADE,  -- Link to the property
     listing_id INT REFERENCES listings(id) ON DELETE CASCADE,
     price NUMERIC(12,2) NOT NULL,  -- The recorded price at that time
-    price_type ENUM('sale', 'rent') NOT NULL,  -- Distinguish sale vs. rental price
+    price_type ENUM('sale', 'rent') NOT NULL DEFAULT 'sale',  -- Distinguish sale vs. rental price
     currency ENUM('EUR', 'USD', 'CZK', 'GBP') NOT NULL DEFAULT 'CZK',
     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- When this price was recorded
 );
@@ -90,7 +90,7 @@ CREATE TABLE macro_economic_data (
     interest_rate NUMERIC(5,2),  -- Mortgage interest rate
     inflation_rate NUMERIC(5,2),  -- General inflation
     vacancy_rate NUMERIC(5,2), --Rate at wich rents are empty
-    risk_premium NUMERIC(5,2),  -- Risk factor for NPV calculations
+    bond_yield NUMERIC(5,2),  -- Risk factor for NPV calculations
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
