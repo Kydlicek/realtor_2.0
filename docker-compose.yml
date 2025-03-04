@@ -65,7 +65,6 @@ services:
     volumes:
       - ollama:/root/.ollama
       - open-webui:/app/backend/data
-      - redis_data
 
 volumes:
   open-webui:

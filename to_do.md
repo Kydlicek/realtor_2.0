@@ -1,5 +1,6 @@
 [x] DB Schema for listing, property, financials
-[] DB Build and connection in utils + data validation in app somewhere either utils or base scraper level before even trying to save data
+[] data validation before saving to DB in python
+[] DB utils for DB interaction
 
 To be done after Fronend + API integration is done
 [] DB+ Elastic Search
@@ -7,6 +8,9 @@ To be done after Fronend + API integration is done
 [] Scraper - for Sreality
 [] Scraper - scraper for each web
 [/] Scraper - Base where will be unified functions for scrapers, fetch, soup, save to db - almost done
+
+Listings Making/scraping
+[x] GPS to Address and vice versaS
 
 [] Listings - update listings, 1 per day, if still alive, if not keep in db to see how long it lasted,
 [] Go global - Scrape more sites even abroad and go on bigger market

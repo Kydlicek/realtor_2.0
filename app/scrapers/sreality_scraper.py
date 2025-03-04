@@ -47,6 +47,7 @@ class SrealityScraper(BaseScraper):
             if dic["name"] == name:
                 return dic["value"]
             
+
     def get_listing_property(self,url):
         # input_url= https://www.sreality.cz/detail/pronajem/byt/2+kk/praha-nove-mesto-stepanska/3660591692
         h_id = url.split('/')[-1]
@@ -73,42 +74,18 @@ class SrealityScraper(BaseScraper):
         
         energy_class = self.find_in_items(res, "Energetická náročnost budovy")[6:7] if len(self.find_in_items(res, "Energetická náročnost budovy")) >= 7 else None
         images = [img["_links"]["self"]["href"] for img in res.get("_embedded", {}).get("images", [])]
-        prompt = f'here is describtion of property return me object like property_type: xxx, rooms: xxx , transaction xxx {description}'
-        purpose = 'u are realestate agent and from describtion of property u have to know what property type it is, what how many rooms are there 2+KK, 1+kk, 3+kk etc.., also what type of transaction it is order rent or sell'
-        make_prompt(prompt=prompt,purpose=purpose)
         
-        prop = {
-            'property_type': 'x',
-            'size_m2': m2,
-            'rooms': 'x',
-            'gps_lat':lat,
-            'gps_lon': lon,
-            'energy_rating':energy_class,
-            'has_balcony':balcony,
-            'parking':parking,
-            'cellar_m2':cellar_m2,
-            'condition':condition,
-            'floor': floor,
-            'elevator': elevator,
-            'garden_size_m2': garden_m2,
-            'furnished': furnished,
-        }
-        listing = {
-            'source': 'x',
-            'url':'x',
-            'images': images,
-            'price':price,
-            'transaction':'x',
-            'contact': contact,
-            'description': description,
-            'is_active': 'x',
-            'rent_price': price,
-
-            
+        property_data = {
 
         }
+        listing_data = {
+
+        }
+        return [property_data,listing_data]
+        
         
 
+        
 
 
 url = 'https://www.sreality.cz/hledani/pronajem/byty'
