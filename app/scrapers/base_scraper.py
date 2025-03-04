@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import requests
 from bs4 import BeautifulSoup
 from utils.db_functions import check_link_exists, save_property, save_listing
-from utils.gps import get_address, get_gps
+from utils.gps import get_address
 import asyncio
 import pytest
 
@@ -69,23 +69,43 @@ class BaseScraper(ABC):
 
             url = self.get_next_page()
 
-        await asyncio.gather(*tasks)
-
-    async def process_listings(self, listings_urls):
-        """Processes extracted listings."""
+    def process_listings(self, listings_urls):
+        """Processes extracted listings and query it for later work."""
         for url in listings_urls:
             if not check_link_exists(url):
-                await asyncio.to_thread(self.process_detailed_listing, url)
+                self.process_detailed_listing(url)
 
-    def process_detailed_listing(self, url):
-        pass
+    def process_detailed_listing(self, listing_url):
+        """Processes data from listing input listing URL."""
+
+       
+        scraped_data = self.get_listing_data(listing_url)
+        address_data = get_address(lat='lat',lon='lon')
 
 
+        prop_data = ''
+        listing_data = ''
 
-    @abstractmethod
-    def get_listing_property(self,url):
-        """returns Property_listing."""
-        pass
+
+        base_prop_data = {
+            "property_type": self.get_transaction_type_and_prop_type()[1],
+            'gps_lat': address_data.get('lat'),
+            'gps_lon': address_data.get('lon'),
+            'country': address_data.get('country'),
+            'country_code': address_data.get('country_code'),
+            'city' :address_data.get('city'),
+            'city_district': address_data.get('city_district'),
+            'street':address_data.get('street'),
+            'full_address': address_data.get('full_address'),
+        }
+        base_listing_data = {
+            'transaction_type': self.get_transaction_type_and_prop_type()[0],
+            "currency": self.currency,
+            'source' : self.source,
+            'listing_url': listing_url
+        }
+
+
     @abstractmethod
     def extract_listings(self, soup) -> list:
         """Extracts listing URLs from the page. and returns a list of URLs."""
@@ -100,54 +120,5 @@ class BaseScraper(ABC):
     def get_last_page(self, soup) -> int:
         """returns max pages"""
         pass
-    def fetch_prop(self):
-        property_data = {
-    "property_type": self.get_transaction_type_and_prop_type()[1],           # e.g., "apartment", "house"
-    "size_m2": 0.0,                # e.g., 85.5
-    "rooms": 0,                     # e.g., 3
-    "has_separate_kitchen": False,  # True/False
-    "gps_lat": 0.0,                 # e.g., 48.8566
-    "gps_lon": 0.0,                 # e.g., 2.3522
-    "country": "",                   # e.g., "Germany"
-    "city": "",                      # e.g., "Berlin"
-    "city_district": "",             # e.g., "Mitte"
-    "address": "",                   # e.g., "123 Main St"
-    "year_built": None,              # e.g., 1990 (optional)
-    "last_reconstruction_year": None, # e.g., 2010 (optional)
-    "condition": "",                 # e.g., "good" (from ENUM)
-    "has_balcony": False,
-    "balcony_size_m2": 0.0,
-    "has_terrace": False,
-    "terrace_size_m2": 0,
-    "has_garden": False,
-    "garden_size_m2": 0,
-    "has_parking": False,
-    "parking": 0,
-    "has_garage": False,
-    "garage": 0,
-    "has_cellar": False,
-    "cellar_size_m2": 0,
-    "is_furnished": False,
-    "has_lift": False,
-    "building_floors": None,         # e.g., 5 (optional)
-    "flat_floor": None,              # e.g., 2 (optional)
-    "energy_rating": ""              # e.g., "B" (from ENUM)
-}
-        return property_data
-    def fetch_listing(self):
-        listing_data = {
-    "source": self.source,                    # e.g., "portal123.cz"
-    "listing_url": "",              # e.g., "https://example.com/listings/123" (required)
-    "api_url": "",                  # e.g., "https://api.example.com/listings/123" (optional)
-    "description": "",              # Long text description (optional)
-    'transaction_type': self.get_transaction_type_and_prop_type()[0],
-    "price": 0.0,                   # Sale price (required)
-    "rent_price": None,             # Rent price (optional, e.g., 1200.0)
-    "building_fees": 0.0,           # Monthly fees (default 0)
-    "electricity_utilities": 0.0,   # Utilities cost (default 0)
-    "provision_rk": 0.0,            # Agency commission (default 0)
-    "currency": self.currency,              # Currency (default "CZK", from ENUM)
-    "contact": None,                # JSON contact info (e.g., {"name": "John", "phone": "..."})
-    "listing_status": "active"      # Status (default "active", from ENUM)
-}
-        return listing_data
+
+       

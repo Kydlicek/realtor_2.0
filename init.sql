@@ -11,9 +11,13 @@ CREATE TABLE properties (
     gps_lat FLOAT NOT NULL,
     gps_lon FLOAT NOT NULL,
     country VARCHAR(50) NOT NULL,
+    country_code VARCHAR(50) NOT NULL,
     city VARCHAR(50) NOT NULL,
+    postcode VARCHAR (50),
     city_district VARCHAR(50),
-    address VARCHAR(255) NOT NULL,
+    street VARCHAR(255) NOT NULL,
+    hause_num: INT,
+    full_address VARCHAR (255),
     -- age attributes
     year_built INT,
     last_reconstruction_year INT,
@@ -51,6 +55,7 @@ CREATE TABLE listings (
     property_id INT REFERENCES properties(id) ON DELETE CASCADE,  -- Foreign key to properties
     source VARCHAR(255),  -- Where the listing was scraped from
     listing_url VARCHAR(255) UNIQUE NOT NULL,  -- Avoid duplicates
+    images JSON
     api_url VARCHAR(255),  -- API endpoint for the listing
     description TEXT,
 
@@ -67,7 +72,7 @@ CREATE TABLE listings (
     contact JSONB,
 
     -- Listing Status
-    listing_status ENUM('active', 'expired', 'sold', 'rented', 'removed') DEFAULT 'active',
+    listing_status ENUM('active', 'removed') DEFAULT 'active',
 
     -- Timestamps
     date_removed TIMESTAMP,  -- When the listing was removed
