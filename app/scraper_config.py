@@ -1,5 +1,7 @@
 SCRAPER_SOURCES = {
     "sreality": {
+        "country":"CZ",
+        "currency": "CZK",
         "base_url": "https://www.sreality.cz/hledani",
         "rent_flat": "/pronajem/byty",
         "rent_house": "/pronajem/domy",
@@ -7,11 +9,15 @@ SCRAPER_SOURCES = {
         "buy_house": "/prodej/domy",
     },
     "reas": {
+        "country":"CZ",
+        "currency": "CZK",
         "base_url": "https://www.reas.cz",
         "buy_flat": "/prodej/byty",
         "buy_house": "/prodej/domy",
     },
     "bezrealitky": {
+        "country":"CZ",
+        "currency": "CZK",
         "base_url": "https://www.bezrealitky.cz/vypis",
         "rent_flat": "/nabidka-pronajem/byt/ceska-republika",
         "rent_house": "/nabidka-pronajem/dum/ceska-republika",
@@ -19,6 +25,8 @@ SCRAPER_SOURCES = {
         "buy_house": "/nabidka-prodej/dum/ceska-republika",
     },
     "ceske_reality": {
+        "country":"CZ",
+        "currency": "CZK",
         "base_url": "https://www.ceskereality.cz",
         "rent_flat": "/pronajem/byty/",
         "rent_house": "/pronajem/rodinne-domy/",
@@ -26,6 +34,8 @@ SCRAPER_SOURCES = {
         "buy_house": "/prodej/rodinne-domy/",
     },
     "idnes": {
+        "country":"CZ",
+        "currency": "CZK",
         "base_url": "https://reality.idnes.cz/s",
         "rent_flat": "/pronajem/byty/",
         "rent_house": "/pronajem/domy/",
