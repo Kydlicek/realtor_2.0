@@ -56,7 +56,6 @@ CREATE TABLE listings (
     source VARCHAR(255),  -- Where the listing was scraped from
     listing_url VARCHAR(255) UNIQUE NOT NULL,  -- Avoid duplicates
     images JSON
-    api_url VARCHAR(255),  -- API endpoint for the listing
     description TEXT,
 
     -- Pricing Details
@@ -68,12 +67,14 @@ CREATE TABLE listings (
     provision_rk FLOAT DEFAULT 0,  -- Commission for the real estate agency
     currency ENUM('EUR', 'USD', 'CZK', 'GBP') NOT NULL DEFAULT 'CZK',  -- Currency type
 
+    -- Listing Status if false it means u can still edit and calculate Financials
+    -- if true it's visible on the website for public
+    published BOOLEAN DEFAULT FALSE,
+
     -- Contact Information (Stored as JSON)
     contact JSONB,
-
     -- Listing Status
     listing_status ENUM('active', 'removed') DEFAULT 'active',
-
     -- Timestamps
     date_removed TIMESTAMP,  -- When the listing was removed
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -82,11 +83,8 @@ CREATE TABLE listings (
 -- Track Price Changes (for both sales & rentals)
 CREATE TABLE price_history (
     id SERIAL PRIMARY KEY,
-    property_id INT REFERENCES properties(id) ON DELETE CASCADE,  -- Link to the property
     listing_id INT REFERENCES listings(id) ON DELETE CASCADE,
     price NUMERIC(12,2) NOT NULL,  -- The recorded price at that time
-    price_type ENUM('sale', 'rent') NOT NULL,  -- Distinguish sale vs. rental price
-    currency ENUM('EUR', 'USD', 'CZK', 'GBP') NOT NULL DEFAULT 'CZK',
     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- When this price was recorded
 );
 

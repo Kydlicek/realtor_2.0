@@ -12,18 +12,6 @@ services:
     ports:
       - "5432:5432"
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-
   redis:
     image: redis:alpine
     container_name: redis
@@ -39,36 +27,17 @@ services:
     depends_on:
       - redis
       - postgres
-      - elasticsearch
     environment:
       CELERY_BROKER_URL: redis://redis:6379/0
       CELERY_RESULT_BACKEND: redis://redis:6379/0
-      DATABASE_URI: postgresql://admin:Admin1234@postgres:5432/real_estate
-      ELASTICSEARCH_HOST: elasticsearch
       API_KEY: sk-1c976bc892554124a23dd746ce79720a
       PYTHONPATH: /app
     # Make sure the app module is correctly specified
     command: celery -A celery_app worker --loglevel=info --concurrency=4
     volumes:
       - ./app:/app # Make sure your app code is mounted
-  open-webui:
-    image: ghcr.io/open-webui/open-webui:ollama
-    container_name: open-webui
-    restart: always
-    ports:
-      - "3000:8080"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
-    volumes:
-      - ollama:/root/.ollama
-      - open-webui:/app/backend/data
+  
 
 volumes:
-  open-webui:
-  ollama:
   postgres_data:
-  elasticsearch_data:
   redis_data:

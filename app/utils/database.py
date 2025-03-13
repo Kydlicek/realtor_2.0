@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import sessionmaker
-from elasticsearch import Elasticsearch
 from datetime import datetime
 import os
 
@@ -12,8 +11,6 @@ metadata = MetaData()
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Elasticsearch connection
-es = Elasticsearch("http://elasticsearch:9200")
 
 # Define tables (reflect existing tables)
 properties = Table("properties", metadata, autoload_with=engine)
